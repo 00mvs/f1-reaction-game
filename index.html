@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F1 Tempo de Reação</title>
+    <title>F1 Reaction Time</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -157,7 +157,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="title">F1 TEMPO DE REAÇÃO</div>
+        <div class="title">F1 REACTION TIME</div>
         
         <div class="lights-container">
             <div class="light-panel" id="panel1">
@@ -193,16 +193,16 @@
         </div>
         
         <div class="game-area">
-            <div class="result" id="result">Pronto para começar?</div>
-            <button class="button" id="startButton">INICIAR</button>
-            <button class="button" id="reactionButton" disabled>CLIQUE QUANDO AS LUZES APAGAREM!</button>
+            <div class="result" id="result">Ready to start?</div>
+            <button class="button" id="startButton">START</button>
+            <button class="button" id="reactionButton" disabled>CLICK WHEN LIGHTS GO OUT!</button>
         </div>
         
         <div class="stats">
-            <h3>Seus resultados:</h3>
-            <p>Última tentativa: <span id="lastTime">-</span> ms</p>
-            <p>Melhor tempo: <span id="bestTime">-</span> ms</p>
-            <p>Média (últimas 5 tentativas): <span id="avgTime">-</span> ms</p>
+            <h3>Your Results:</h3>
+            <p>Last attempt: <span id="lastTime">-</span> ms</p>
+            <p>Best time: <span id="bestTime">-</span> ms</p>
+            <p>Average (last 5 attempts): <span id="avgTime">-</span> ms</p>
         </div>
     </div>
 
@@ -245,19 +245,19 @@
             });
         }
         
-        // Light up a panel (all 4 lights in that panel)
-        function lightUpPanel(panelIndex) {
+        // Light up only the bottom two lights in a panel
+        function lightUpBottomLights(panelIndex) {
             const startIdx = panelIndex * 4;
-            for (let i = 0; i < 4; i++) {
-                allLights[startIdx + i].classList.add('red');
-            }
+            // Light up only the bottom two lights (index 2 and 3 in each panel)
+            allLights[startIdx + 2].classList.add('red');
+            allLights[startIdx + 3].classList.add('red');
         }
         
         function startSequence() {
             resetLights();
             startButton.disabled = true;
             reactionButton.disabled = false;
-            result.textContent = "Aguarde...";
+            result.textContent = "Wait...";
             waitingForReaction = false;
             
             // F1 style sequence - light up each panel with a delay
@@ -267,7 +267,7 @@
                 // Turn on panels sequentially
                 for (let i = 0; i < 5; i++) {
                     setTimeout(() => {
-                        lightUpPanel(i);
+                        lightUpBottomLights(i);
                         
                         // If this is the last panel, start the random wait
                         if (i === 4) {
@@ -288,7 +288,7 @@
             waitingForReaction = true;
             startTime = new Date().getTime();
             lightsOutTime = startTime;
-            result.textContent = "AGORA!";
+            result.textContent = "LIGHTS OUT AND AWAY WE GO!";
         }
         
         function calculateAverage() {
@@ -311,7 +311,7 @@
             if (checkFalseStart()) {
                 // False start!
                 resetLights();
-                result.textContent = "LARGADA QUEIMADA!";
+                result.textContent = "FALSE START!";
                 result.classList.add('false-start');
                 startButton.disabled = false;
                 reactionButton.disabled = true;
@@ -331,7 +331,7 @@
                     bestTime = reactionTime;
                 }
                 
-                result.textContent = `Seu tempo: ${reactionTime} ms`;
+                result.textContent = `Your time: ${reactionTime} ms`;
                 lastTimeEl.textContent = `${reactionTime}`;
                 bestTimeEl.textContent = bestTime === Number.MAX_VALUE ? "-" : `${bestTime}`;
                 avgTimeEl.textContent = `${calculateAverage()}`;
