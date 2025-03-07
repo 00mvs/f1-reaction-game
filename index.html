@@ -150,6 +150,10 @@
             animation: blink 0.5s infinite;
         }
         
+        .audio-control {
+            display: none;
+        }
+        
         @keyframes blink {
             0% { opacity: 1; }
             50% { opacity: 0; }
@@ -206,6 +210,12 @@
             <p>Best time: <span id="bestTime">-</span> ms</p>
             <p>Average (last 5 attempts): <span id="avgTime">-</span> ms</p>
         </div>
+        
+        <!-- Audio element for the start sound -->
+        <audio id="startSound" class="audio-control">
+            <source src="https://dl.dropboxusercontent.com/s/mtd8aniacribs3j/All%202022%20It's%20Light%20Out%20And%20Away%20We%20Go!%20Trim.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
     </div>
 
     <script>
@@ -233,6 +243,7 @@
         const lastTimeEl = document.getElementById('lastTime');
         const bestTimeEl = document.getElementById('bestTime');
         const avgTimeEl = document.getElementById('avgTime');
+        const startSound = document.getElementById('startSound');
         
         let startTime;
         let waitingForReaction = false;
@@ -291,6 +302,12 @@
             startTime = new Date().getTime();
             lightsOutTime = startTime;
             result.textContent = "LIGHTS OUT AND AWAY WE GO!";
+            
+            // Play the start sound when lights go out
+            startSound.currentTime = 0;
+            startSound.play().catch(e => {
+                console.log("Audio playback failed:", e);
+            });
         }
         
         function calculateAverage() {
