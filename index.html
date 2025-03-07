@@ -154,6 +154,33 @@
             display: none;
         }
         
+        .sound-toggle {
+            background-color: #333;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            font-size: 14px;
+        }
+        
+        .sound-toggle i {
+            margin-right: 6px;
+        }
+        
+        .sound-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+            position: relative;
+            top: 2px;
+        }
+        
         @keyframes blink {
             0% { opacity: 1; }
             50% { opacity: 0; }
@@ -164,6 +191,10 @@
 <body>
     <div class="container">
         <div class="title">F1 REACTION TIME</div>
+        
+        <button id="soundToggle" class="sound-toggle">
+            <span class="sound-icon">🔊</span> Sound: ON
+        </button>
         
         <div class="lights-container">
             <div class="light-panel" id="panel1">
@@ -244,12 +275,34 @@
         const bestTimeEl = document.getElementById('bestTime');
         const avgTimeEl = document.getElementById('avgTime');
         const startSound = document.getElementById('startSound');
+        const soundToggle = document.getElementById('soundToggle');
         
         let startTime;
         let waitingForReaction = false;
         let lightsOutTime;
         let times = [];
         let bestTime = Number.MAX_VALUE;
+        let soundEnabled = true;
+        
+        // Function to toggle sound on/off
+        soundToggle.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            if (soundEnabled) {
+                soundToggle.innerHTML = '<span class="sound-icon">🔊</span> Sound: ON';
+            } else {
+                soundToggle.innerHTML = '<span class="sound-icon">🔇</span> Sound: OFF';
+            }
+        });
+        
+        // Function to play sound if enabled
+        function playSound() {
+            if (soundEnabled) {
+                startSound.currentTime = 0;
+                startSound.play().catch(e => {
+                    console.log("Audio playback failed:", e);
+                });
+            }
+        }
         
         // Turn all lights off
         function resetLights() {
@@ -272,6 +325,9 @@
             reactionButton.disabled = false;
             result.textContent = "Wait...";
             waitingForReaction = false;
+            
+            // Play the sound when starting the sequence
+            playSound();
             
             // F1 style sequence - light up each panel with a delay
             setTimeout(() => {
@@ -302,12 +358,6 @@
             startTime = new Date().getTime();
             lightsOutTime = startTime;
             result.textContent = "LIGHTS OUT AND AWAY WE GO!";
-            
-            // Play the start sound when lights go out
-            startSound.currentTime = 0;
-            startSound.play().catch(e => {
-                console.log("Audio playback failed:", e);
-            });
         }
         
         function calculateAverage() {
